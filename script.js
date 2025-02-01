@@ -1,85 +1,65 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const questionContainer = document.getElementById('question-container');
-    const optionsContainer = document.getElementById('options-container');
-    const nextButton = document.getElementById('next-btn');
+let currentQuestionIndex = 0;
+let score = 0;
+let quizData = [];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
+// Fetch quiz data from the API
+fetch('https://api.jsonserve.com/Uw5CrX')
+  .then(response => response.json())
+  .then(data => {
+    quizData = data;
+    loadQuestion();  // Start quiz
+  })
+  .catch(error => {
+    console.error("Error fetching quiz data:", error);
+    document.getElementById("question").innerText = "Failed to load quiz data.";
+  });
 
-    const quizData = [
-        {
-            question: "What is the capital of France?",
-            options: ["Paris", "London", "Berlin", "Madrid"],
-            answer: "Paris"
-        },
-        {
-            question: "Which planet is known as the Red Planet?",
-            options: ["Earth", "Mars", "Jupiter", "Saturn"],
-            answer: "Mars"
-        },
-        {
-            question: "Who wrote 'To Kill a Mockingbird'?",
-            options: ["Harper Lee", "Mark Twain", "Ernest Hemingway", "F. Scott Fitzgerald"],
-            answer: "Harper Lee"
-        }
-    ];
+// Load question
+function loadQuestion() {
+  if (currentQuestionIndex < quizData.length) {
+    const question = quizData[currentQuestionIndex];
+    document.getElementById("question").innerText = question.question;
+    document.getElementById("options").innerHTML = ''; // Clear previous options
 
-    function showQuestion() {
-        resetState();
-        const currentQuestion = quizData[currentQuestionIndex];
-        questionContainer.innerText = currentQuestion.question;
-
-        currentQuestion.options.forEach(option => {
-            const button = document.createElement('button');
-            button.innerText = option;
-            button.classList.add('option');
-            if (option === currentQuestion.answer) {
-                button.dataset.correct = true;
-            }
-            button.addEventListener('click', selectAnswer);
-            optionsContainer.appendChild(button);
-        });
-    }
-
-    function resetState() {
-        while (optionsContainer.firstChild) {
-            optionsContainer.removeChild(optionsContainer.firstChild);
-        }
-    }
-
-    function selectAnswer(e) {
-        const selectedButton = e.target;
-        const correct = selectedButton.dataset.correct;
-
-        if (correct) {
-            score++;
-            selectedButton.style.backgroundColor = '#4CAF50';
-        } else {
-            selectedButton.style.backgroundColor = '#f44336';
-        }
-
-        Array.from(optionsContainer.children).forEach(button => {
-            button.disabled = true;
-        });
-
-        nextButton.style.display = 'block';
-    }
-
-    nextButton.addEventListener('click', () => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < quizData.length) {
-            showQuestion();
-            nextButton.style.display = 'none';
-        } else {
-            showResults();
-        }
+    question.answers.forEach((answer, index) => {
+      const button = document.createElement("button");
+      button.innerText = answer;
+      button.onclick = () => checkAnswer(answer);
+      document.getElementById("options").appendChild(button);
     });
+    
+    // Hide Next button initially
+    document.getElementById("next-button").style.display = 'none';
+  } else {
+    showResults();
+  }
+}
 
-    function showResults() {
-        resetState();
-        questionContainer.innerText = `Quiz Completed! Your score: ${score}/${quizData.length}`;
-        nextButton.style.display = 'none';
-    }
+// Check answer
+function checkAnswer(selectedAnswer) {
+  const correctAnswer = quizData[currentQuestionIndex].correct_answer;
+  if (selectedAnswer === correctAnswer) {
+    score++;
+  }
 
-    showQuestion();
-});
+  // Show Next button
+  document.getElementById("next-button").style.display = 'inline-block';
+
+  // Disable all buttons after selection
+  const buttons = document.querySelectorAll("#options button");
+  buttons.forEach(button => button.disabled = true);
+}
+
+// Next Question button
+document.getElementById("next-button").onclick = function() {
+  currentQuestionIndex++;
+  loadQuestion();
+};
+
+// Show results at the end
+function showResults() {
+  document.getElementById("quiz-container").style.display = 'none';
+  const resultElement = document.getElementById("result");
+  resultElement.style.display = 'block';
+  resultElement.innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+}
