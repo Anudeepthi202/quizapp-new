@@ -1,52 +1,43 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f4f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f4f7fa;
+  margin: 0;
 }
 
-.quiz-container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 500px;
-    text-align: center;
-}
-
-h1 {
-    margin-bottom: 20px;
+#quiz-container {
+  text-align: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 200px;
 }
 
 button:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
-.option {
-    background-color: #e7e7e7;
-    border: none;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
+button:disabled {
+  background-color: #cccccc;
 }
 
-.option:hover {
-    background-color: #d4d4d4;
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
