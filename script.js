@@ -11,13 +11,12 @@ fetch('https://api.jsonserve.com/Uw5CrX')
     displayQuiz(data);
   })
   .catch(error => {
-  console.error('Error loading data:', error); // Logs the error in the console
-  document.getElementById('quiz-container').innerHTML = `
-    <p>Failed to load quiz data. Please try again later.</p>
-    <p>Error details: ${error.message}</p> <!-- Shows detailed error message on the webpage -->
-  `;
-});
-
+    console.error('Error loading data:', error); // Logs the error in the console
+    document.getElementById('quiz-container').innerHTML = `
+      <p>Failed to load quiz data. Please try again later.</p>
+      <p>Error details: ${error.message}</p> <!-- Shows detailed error message on the webpage -->
+    `;
+  });
 
 function displayQuiz(data) {
   const quizContainer = document.getElementById('quiz-container');
@@ -38,23 +37,37 @@ function displayQuiz(data) {
   const questionsContainer = document.createElement('div');
   questionsContainer.classList.add('questions-container');
   
-  data.questions.forEach(question => {
+  data.questions.forEach((question) => {
     const questionElement = document.createElement('div');
     questionElement.classList.add('question');
 
-    questionElement.innerHTML = `
-      <h3>${question.description}</h3>
-      <ul>
-        ${question.options.map(option => `
-          <li>${option.description}</li>
-        `).join('')}
-      </ul>
-      <p><strong>Correct Answer:</strong> ${question.options.find(option => option.is_correct).description}</p>
-    `;
+    // Display question description
+    questionElement.innerHTML = `<h3>${question.description}</h3>`;
+    
+    // Display options as buttons
+    const optionsContainer = document.createElement('div');
+    question.options.forEach((option) => {
+      const optionButton = document.createElement('button');
+      optionButton.textContent = option.description;
+      
+      optionButton.onclick = () => {
+        const feedback = document.createElement('p');
+        if (option.is_correct) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = 'green';
+        } else {
+          feedback.textContent = 'Incorrect. Try again.';
+          feedback.style.color = 'red';
+        }
+        questionElement.appendChild(feedback);
+      };
 
+      optionsContainer.appendChild(optionButton);
+    });
+
+    questionElement.appendChild(optionsContainer);
     questionsContainer.appendChild(questionElement);
   });
 
   quizContainer.appendChild(questionsContainer);
 }
-
