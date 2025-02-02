@@ -7,38 +7,50 @@ fetch('https://api.jsonserve.com/Uw5CrX')
     return response.json(); // Parse the JSON data
   })
   .then(data => {
-    // Successfully received data, now display it
-    displayQuestions(data);
+    console.log('Quiz data:', data); // Log the response data for debugging
+    displayQuiz(data);
   })
   .catch(error => {
-    // If there’s an error, show an error message
     console.error('Error loading data:', error);
     document.getElementById('quiz-container').innerHTML = 'Failed to load quiz data. Please try again later.';
   });
 
-function displayQuestions(data) {
+function displayQuiz(data) {
   const quizContainer = document.getElementById('quiz-container');
-  quizContainer.innerHTML = ''; // Clear any existing content
+  quizContainer.innerHTML = ''; // Clear existing content
 
-  // Assuming that 'data.questions' contains the array of questions
-  if (data && data.questions) {
-    data.questions.forEach((question) => {
-      const questionElement = document.createElement('div');
-      questionElement.classList.add('question');
-      
-      // Handling the question description and answers
-      questionElement.innerHTML = `
-        <h3>${question.description}</h3>
-        <ul>
-          ${question.options.map(answer => `
-            <li>${answer.description}</li>
-          `).join('')}
-        </ul>
-        <p><strong>Correct Answer:</strong> ${question.options.find(option => option.is_correct).description}</p>
-      `;
-      quizContainer.appendChild(questionElement);
-    });
-  } else {
-    quizContainer.innerHTML = 'No questions available.';
-  }
+  // Display quiz title and other information
+  const quizInfo = document.createElement('div');
+  quizInfo.classList.add('quiz-info');
+  quizInfo.innerHTML = `
+    <h1>${data.title}</h1>
+    <p><strong>Topic:</strong> ${data.topic}</p>
+    <p><strong>Duration:</strong> ${data.duration} minutes</p>
+    <p><strong>End Time:</strong> ${new Date(data.end_time).toLocaleString()}</p>
+  `;
+  quizContainer.appendChild(quizInfo);
+
+  // Display questions
+  const questionsContainer = document.createElement('div');
+  questionsContainer.classList.add('questions-container');
+  
+  data.questions.forEach(question => {
+    const questionElement = document.createElement('div');
+    questionElement.classList.add('question');
+
+    questionElement.innerHTML = `
+      <h3>${question.description}</h3>
+      <ul>
+        ${question.options.map(option => `
+          <li>${option.description}</li>
+        `).join('')}
+      </ul>
+      <p><strong>Correct Answer:</strong> ${question.options.find(option => option.is_correct).description}</p>
+    `;
+
+    questionsContainer.appendChild(questionElement);
+  });
+
+  quizContainer.appendChild(questionsContainer);
 }
+
