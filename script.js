@@ -11,9 +11,13 @@ fetch('https://api.jsonserve.com/Uw5CrX')
     displayQuiz(data);
   })
   .catch(error => {
-    console.error('Error loading data:', error);
-    document.getElementById('quiz-container').innerHTML = 'Failed to load quiz data. Please try again later.';
-  });
+  console.error('Error loading data:', error); // Logs the error in the console
+  document.getElementById('quiz-container').innerHTML = `
+    <p>Failed to load quiz data. Please try again later.</p>
+    <p>Error details: ${error.message}</p> <!-- Shows detailed error message on the webpage -->
+  `;
+});
+
 
 function displayQuiz(data) {
   const quizContainer = document.getElementById('quiz-container');
